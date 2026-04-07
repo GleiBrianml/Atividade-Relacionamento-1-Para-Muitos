@@ -99,3 +99,27 @@ def listar_avancada():
 
 # listar_avancada()
 
+def atualizar_medico():
+    with Session() as session:
+        try:
+            novo_nome_paciente = input("Digite o nome do paciente: ").strip().capitalize()
+            novo_sintoma = input(f"Digite o novo sintoma do paciente {novo_nome_paciente}: ").strip().capitalize()
+            novo_medico = input("Digite o nome do novo medico: ").strip().capitalize()
+
+
+            consulta = session.query(Consulta).filter_by(nome=novo_nome_paciente).first()
+            medico = session.query(Medico).filter_by(nome=novo_medico).first()
+
+            consulta.sintomas = novo_sintoma
+            consulta.nome = novo_nome_paciente
+            consulta.medico = novo_medico
+
+            session.commit()
+            print("Consulta atualizada com sucesso!")
+            listar_consulta()
+        except Exception as erro:
+            session.rollback()
+            print(f"Ocorreu um erro {erro}")    
+
+atualizar_medico()
+        
