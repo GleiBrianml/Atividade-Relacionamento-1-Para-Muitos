@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Table, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import datetime
 import pytz
@@ -29,7 +29,7 @@ class Consulta(Base):
     medico = relationship("Medico", back_populates= "consultas")
 
     def __repr__(self):
-        return f"Consultas: ID = {self.id} - nome_paciente = {self.nome_paciente} idade_paciente = {self.idade_paciente} - data_consulta ={self.data_consulta}"
+        return f"Consultas: ID = {self.id} - nome = {self.nome} - sintomas = {self.sintomas} - data_consulta ={self.data_consulta}"
 
 engine = create_engine("sqlite:///hospital.db")
 
@@ -37,7 +37,7 @@ Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
 
-def Cadastrar_medico():
+def cadastrar_medico():
     nome_medico = input("Digite o nome do Medico: ").strip().capitalize()
 
     with Session() as session:
@@ -71,6 +71,31 @@ def cadastrar_consultas():
             print(f"Ocorreu um erro {erro}")
 
             
-#Cadastrar_medico()
+#cadastrar_medico()
 
-cadastrar_consultas()
+#cadastrar_consultas()
+
+def listar_consulta():
+    with Session() as session:
+        try:
+            consultas =  session.query(Consulta).all()
+            for cons in consultas:
+                print(f"\n Paciente: {cons.nome} - Medico: {cons.medico.nome} - Sintoma: {cons.sintomas}")
+        except Exception as erro:
+            session.rollback()
+            print(f"Ocorreu um erro {erro}")
+
+# listar_consulta()
+
+def listar_avancada():
+    with Session() as session:
+        try:
+            consultas = session.query(Consulta).filter(Consulta.medico_id == 1).all()
+            for cons in consultas:
+                print(f"\n Paciente: {cons.nome} - Medico: {cons.medico.nome} - Sintoma: {cons.sintomas}")
+        except Exception as erro:
+            session.rollback()
+            print(f"Ocorreu um erro {erro}")
+
+# listar_avancada()
+
